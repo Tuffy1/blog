@@ -145,12 +145,7 @@ requestMovies();
 
 ```
 
-2. promise 实现异步操作
-
-```js
-```
-
-3. await/async 异步处理
+2. await/async 异步处理
 
 ```js
 
