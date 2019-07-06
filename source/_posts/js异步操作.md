@@ -16,18 +16,10 @@ tags:
 let count = 0; // 设置一个变量，每个请求成功后都加1，作为所有请求是否都成功了的判断标志
 function requestMovies(url) {
   request(url, (err, response, body) => {
-    if (err === null && response.statusCode === 200) {
-      const e = cheerio.load(body); 
-      const movieList = e('.item');
-      for (let i = 0; i < movieList.length; i += 1) {
-        let movieItem = movieList[i];
-        let movieInfo = takeMovie(movieItem);
-        movies.push(movieInfo);
-      }
-      count += 1;
-      if (count === 10) {
-        console.log(movies);
-      }
+    ...
+    count += 1;
+    if (count === 10) {
+      console.log(movies);
     }
   });
 }
@@ -42,25 +34,16 @@ for (let i = 0; i < 10; i += 1) {
 2. promise 实现异步操作
 
 ```js
+const promisify = require('pify');
 
 function requestMovies(url) {
-  const promise = new Promise(function (resolve, reject) {
-    // 此处request是一个import进来的方法，故依然使用其支持的回调的方法
-    request(url, (err, response, body) => {
-      if (err === null && response.statusCode === 200) {
-        const e = cheerio.load(body); 
-        const movieList = e('.item');
-        for (let i = 0; i < movieList.length; i += 1) {
-          let movieItem = movieList[i];
-          let movieInfo = takeMovie(movieItem);
-          movies.push(movieInfo);
-        }
-        return resolve();
-      }
-      return reject(err);
-    });
+  return promisify(request, {multiArgs: true})(url).then(res => {
+    const [response, body] = res;
+    if (response.statusCode === 200) {
+      ...
+      movies.push(movieInfo);
+    }
   });
-  return promise;
 }
 
 const promises = [];
@@ -80,22 +63,13 @@ Promise.all(promises).then(() => {
 ```js
 
 function requestMovies(url) {
-  const promise = new Promise(function (resolve, reject) {
-    request(url, (err, response, body) => {
-      if (err === null && response.statusCode === 200) {
-        const e = cheerio.load(body); 
-        const movieList = e('.item');
-        for (let i = 0; i < movieList.length; i += 1) {
-          let movieItem = movieList[i];
-          let movieInfo = takeMovie(movieItem);
-          movies.push(movieInfo);
-        }
-        return resolve(movies);
-      }
-      return reject(err);
-    });
+  return promisify(request, {multiArgs: true})(url).then(res => {
+    const [response, body] = res;
+    if (response.statusCode === 200) {
+      ...
+      movies.push(movieInfo);
+    }
   });
-  return promise;
 }
 
 const promises = [];
@@ -125,13 +99,7 @@ function requestMovies() {
   const url = `https://movie.douban.com/top250?start=${count * 25}`;
   request(url, (err, response, body) => {
     if (err === null && response.statusCode === 200) {
-      const e = cheerio.load(body); 
-      const movieList = e('.item');
-      for (let i = 0; i < movieList.length; i += 1) {
-        let movieItem = movieList[i];
-        let movieInfo = takeMovie(movieItem);
-        console.log(movieInfo);
-      }
+      ...
       count += 1;
       if (count === 10) {
         return;
@@ -150,22 +118,13 @@ requestMovies();
 ```js
 
 function requestMovies(url) {
-  const promise = new Promise(function (resolve, reject) {
-    request(url, (err, response, body) => {
-      if (err === null && response.statusCode === 200) {
-        const e = cheerio.load(body); 
-        const movieList = e('.item');
-        for (let i = 0; i < movieList.length; i += 1) {
-          let movieItem = movieList[i];
-          let movieInfo = takeMovie(movieItem);
-          console.log(movieInfo);
-        }
-        return resolve(movies);
-      }
-      return reject(err);
-    });
+  return promisify(request, {multiArgs: true})(url).then(res => {
+    const [response, body] = res;
+    if (response.statusCode === 200) {
+      ...
+      console.log(movieInfo);
+    }
   });
-  return promise;
 }
 
 async function collectMovies() {
