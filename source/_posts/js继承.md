@@ -29,10 +29,10 @@ cat.getSound(); // 'MiaoMiao'
 
 !['js继承1.png'](/images/js继承1.png)
 
-Animal.prototype 有共有函数 getSound，和一个指向Animal 构造函数的 constructor。dog 实例中有私有属性 sound，同时还有一个对象 __proto__,其中与 Animal.prototype 中内容完全相同，严格相等结果为 true。
+Animal.prototype 有共有函数 getSound，和一个指向Animal 构造函数的 constructor。dog 实例中有实例属性 sound，同时还有一个对象 \__proto__,其中与 Animal.prototype 中内容完全相同，严格相等结果为 true。
 
-当调用实例的某个属性时，首先会在该对象内部查找该属性，如果查找不到，则会在对象的 __proto__ 中找。
-而我们从 dog.__proto__ === Animal.prototype 中知道，在对象的 __proto__ 查找，实际上是在其对象的原型（Animal.prototype）中查找。从继承的角度来看，如果在 Animal.prototype 中找不到，我们希望它再往上找，那么如果可以在 dog.__proto__ 中，还有再往上一级的 __proto__，以此类推，我们就可以一直沿着原型链往上找：
+当调用实例的某个属性时，首先会在该对象内部查找该属性，如果查找不到，则会在对象的 \__proto__ 中找。
+而我们从 dog.\__proto__ === Animal.prototype 中知道，在对象的 \__proto__ 查找，实际上是在其对象的原型（Animal.prototype）中查找。从继承的角度来看，如果在 Animal.prototype 中找不到，我们希望它再往上找，那么如果可以在 dog.\__proto__ 中，还有再往上一级的 \__proto__，以此类推，我们就可以一直沿着原型链往上找：
 
 ```js
 // dog
@@ -78,13 +78,13 @@ dog.getDogProperty(); // 'WangWang'
 我们希望 Dog.prototype 可以指向上一级。
 基于上面的规则，原型链继承中，我们令对象原型等于上一级的实例对象，即 Dog.prototype = new Animal()，那么此时的 Dog 的原型为：
 ![js继承3.png](/images/js继承4.png)
-此时我们在 Dog 的原型中可以去得到上一级的所有属性（包括私有属性sound）和方法。通过这种赋值，实例 dog 可以在 __proto__ 中不断找到上一级的属性和方法。
+此时我们在 Dog 的原型中可以去得到上一级的所有属性（包括属性sound）和方法。通过这种赋值，实例 dog 可以在 \__proto__ 中不断找到上一级的属性和方法。
 
 但是到目前为止的方法中，存在着两个缺点：
 
 1. 通过 Dog.prototype = new Animal() 赋值得到新的 Dog 原型，之后再创建 Dog 的实例时，无法向 Animal 的构造函数传值，也就是我在创建实例 dog 时，无法对该实例进行 sound 这个属性的赋值。
 
-2. 从图中也可以看到，sound 属性是放在 __proto__ 中的，意味着它是一个所有实例共用的属性，比如我现在再创建一个 dog2 实例：
+2. 从图中也可以看到，sound 属性是放在 \__proto__ 中的，意味着它是一个所有实例共用的属性，比如我现在再创建一个 dog2 实例：
 
 ```js
 function Animal(s) {
@@ -114,7 +114,7 @@ dog2.color // ['red', 'black', 'white']
 
 ## 借用构造函数继承
 
-那么我们需要父类的私有属性也可以正常被所有子类实例创建，可以借助构造函数继承，即在子类构造函数中调用父类的构造函数：
+那么我们需要父类的属性也可以正常被所有子类实例创建，可以借助构造函数继承，即在子类构造函数中调用父类的构造函数：
 
 ```js
 function Animal(s) {
@@ -134,11 +134,11 @@ dog1.sound // 'dog1'
 dog1.color // ['red', 'black']
 ```
 
-可以看到，创建实例 dog 和 dog1 时，执行 Dog 构造函数，而在 Dog 构造函数中，会将 this(即实例对象本身) 为参，用 call 调用其父类构造函数，这样两个实例对象都拥有了父类的私有属性，并且彼此间互不干扰。
+可以看到，创建实例 dog 和 dog1 时，执行 Dog 构造函数，而在 Dog 构造函数中，会将 this(即实例对象本身) 为参，用 call 调用其父类构造函数，这样两个实例对象都拥有了父类的属性，并且彼此间互不干扰。
 ![js继承5](/images/js继承5.png)
-可以看到现在属性 color 和 sound 都是直接在 dog 下，而不是在 __proto__ 中。
+可以看到现在属性 color 和 sound 都是直接在 dog 下，而不是在 \__proto__ 中。
 
-但如果只有构造函数，那么就只能得到父类的私有属性，却不能得到其在原型上的方法和属性。
+但如果只有构造函数，那么就只能得到父类的属性，却不能得到其在原型上的方法和属性。
 
 ## 组合继承
 
@@ -173,7 +173,7 @@ dog1.getSound(); // 'dog1'
 ![js继承6](/images/js继承6.png)
 
 但是这样父类的构造函数执行了两次，可以看到 dog 实例中拥有两份相同的属性 color/sound。
-其实我们最终期待的效果是，color/sound 直接存在对象下，而 __proto__ 则不需要这两个属性，只存原型上的方法。
+其实我们最终期待的效果是，color/sound 直接存在对象下，而 \__proto__ 则不需要这两个属性，只存原型上的方法。
 
 ## 寄生组合式继承
 
@@ -218,9 +218,57 @@ var F = function() {}; // 创建一个临时的函数对象
 F.prototype = Animal.prototype;
 Dog.prototype = new F();
 Dog.prototype.constructor = Dog;
+
+// 相当于
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
 ```
 
 此时 Dog.prototype 和实例 dog 如下：
 ![js继承8](/images/js继承8.png)
 
 这个时候已经得到我们期待中的对象结构
+
+## 延伸：new操作符的原理
+
+依旧是篇首的例子：
+
+```js
+function Animal(s) {
+  this.sound = s;
+}
+
+Animal.prototype.getSound = function() {
+  console.log(this.sound);
+}
+
+var dog = new Animal('WangWang');
+dog.sound // 'WangWang'
+dog.getSound(); // 'WangWang'
+```
+
+我们看到new操作符可以创建一个实例。该实例会执行构造函数（this.sound = s语句使得dog.sound = 'WangWang'），同时该对象可以调用Animal.prototype上的方法。
+!['js继承1.png'](/images/js继承1.png)
+
+Animal.prototype 有共有函数 getSound，和一个指向Animal 构造函数的 constructor。dog 实例中有属性 sound，同时还有一个对象 \__proto__,其中与 Animal.prototype 中内容完全相同，严格相等结果为 true。
+
+再看看 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new/ "MDN") 对new操作的介绍：
+
+1. 创建一个空的简单JavaScript对象（即{}）；
+2. 链接该对象（即设置该对象的构造函数）到另一个对象 ；
+3. 将步骤1新创建的对象作为this的上下文 ；
+4. 如果该函数没有返回对象，则返回this。
+
+我们可以模拟new的实现如下：
+
+```js
+function new() {
+  var obj = new Object(); // 创建一个新对象，即最后要返回的对象
+  obj.__proto__ = ctor.prototype; // 让obj的__proto__属性等于对象的原型
+  var ctor = [].shift.call(arguments); // 取出第一个参数，即构造函数
+  var ret = ctor.apply(obj, arguments); // 改构造函数的this指向为obj，执行构造函数
+  // 如果构造函数中指定了返回对象，那么返回该对象
+  // 如果构造函数中没有返回值，或者返回值不是个对象（是个基本类型数据），那么返回我们创建的obj；
+  return typeof ret === 'object' ? ret : obj;
+}
+```
