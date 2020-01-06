@@ -113,6 +113,6 @@ console.log(TimeMgr.date);
 2. 对 TimeMgr 这个引用的值直接重新进行赋值会报错，因为其有属性 read-only。但对 TimeMgr 的其中一个属性 data 重新赋值不会报错。（不过不建议这么直接赋值，会让错误变得难以定位。可以在被引用文件中写类似函数 updateDate，通过调用函数更新属性值）。
    （与 CommonJS 不同，CommonJS 是值的拷贝）
 
-参考链接：
+## 参考
 
 [阮一峰 ECMAScript 6 入门](http://es6.ruanyifeng.com/#docs/module)
